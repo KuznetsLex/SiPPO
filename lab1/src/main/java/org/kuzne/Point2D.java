@@ -1,5 +1,6 @@
 package org.kuzne;
 import java.util.Objects;
+import java.util.function.DoubleUnaryOperator;
 
 public class Point2D implements Comparable<Point2D>{
     private double x;
@@ -11,9 +12,9 @@ public class Point2D implements Comparable<Point2D>{
         this.y = 0;
     }
 
-    public Point2D(double x, double y) {
+    public Point2D(double x, DoubleUnaryOperator f) {
         this.x = x;
-        this.y = y;
+        this.y = f.applyAsDouble(x);
     }
 
     public double getX() {
@@ -51,7 +52,7 @@ public class Point2D implements Comparable<Point2D>{
 
     @Override
     public String toString() {
-        return "(" + getX() + getY() + ")";
+        return "(" + getX() + ", " + getY() + ")";
     }
 
     @Override    
