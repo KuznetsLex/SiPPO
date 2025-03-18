@@ -1,0 +1,316 @@
+GAMS 49.2.0  9b2b0844 Mar 5, 2025           DAX-DAC arm 64bit/macOS - 03/18/25 14:06:51 Page 1
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
+   1  Sets
+   2    i   продукты / chair, tablee /
+   3    j   поставщики сырья   / magnitogorsk, cheboksari, mahachkala /;
+   4   
+   5  Parameters
+   6    a(i) ограничение на число продаж продукта i в количестве
+   7    / chair 40
+   8      tablee 10 /
+   9    b(j) ограничение на объем поставок поставщика j в центнерах
+  10    / magnitogorsk 100
+  11      cheboksari 70
+  12      mahachkala 50/
+  13    c(j) цена единицы веса сырья от поставщика в рублях
+  14    / magnitogorsk 20000
+  15      cheboksari 30000
+  16      mahachkala 40000/
+  17    p(i) цена продажи единицы продукта в рублях
+  18    / chair 6000
+  19      tablee 12000/;
+  20   
+  21  Table  v(i,j) количество продукта i которое можно получить из единицы веса сырья j
+  22              magnitogorsk  cheboksari  mahachkala
+  23    chair         14           16            7
+  24    tablee          2            3            1    ;
+  25   
+  26   
+  27  Variables
+  28    z целевая функция
+  29    Integer variable x(i, j) объем поставки сырья от поставщика j использованное для создания продукта i;
+  30   
+  31  Equations
+  32    profit    устанавливает целевую функцию
+  33    production(i) ограничение на выпуск продукта i
+  34    supply(j) ограничение на объем закупки сырья у поставщика j
+  35    positiveV(i, j) неотрицательность затрат сырья j на создание продукта i
+  36    positiveX(i, j) неотрицательность поставки сырья j для производства продукта i
+  37    positiveA(i) неотрицательность объема продажи продукта i
+  38    positiveB(j) неотрицательность объема поставки сырья от поставщика j
+  39    positiveZ неотрицательность целевой функции;
+  40   
+  41  profit ..           z =e= sum(i, (sum(j, (v(i, j) * x(i, j))) * p(i))) - sum(j, (sum(i, x(i, j)) * c(j)));
+  42  production(i) ..    sum(j, v(i, j) * x(i, j)) =l= a(i);
+  43  supply(j) ..        sum(i, x(i, j)) =l= b(j);
+  44  positiveV(i, j) ..  v(i, j) =g= 0;
+  45  positiveX(i, j) ..  x(i, j) =g= 0;
+  46  positiveA(i) ..     a(i) =g= 0;
+  47  positiveB(j) ..     b(j) =g= 0;
+  48  positiveZ ..        z =g= 0;
+  49   
+  50  Model lab2 /all/;
+  51   
+  52  Solve lab2 using MIP maximazing z;
+  53  display z.l;
+
+
+COMPILATION TIME     =        0.001 SECONDS      3 MB  49.2.0 9b2b0844 DAX-DAC
+GAMS 49.2.0  9b2b0844 Mar 5, 2025           DAX-DAC arm 64bit/macOS - 03/18/25 14:06:51 Page 2
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Equation Listing    SOLVE lab2 Using MIP From line 52
+
+
+---- profit  =E=  устанавливает целевую функцию
+
+profit..  z - 64000*x(chair,magnitogorsk) - 66000*x(chair,cheboksari) - 2000*x(chair,mahachkala) - 4000*x(tablee,magnitogorsk) - 6000*x(tablee,cheboksari) + 28000*x(tablee,mahachkala) =E= 0 ; (LHS = 0)
+     
+
+---- production  =L=  ограничение на выпуск продукта i
+
+production(chair)..  14*x(chair,magnitogorsk) + 16*x(chair,cheboksari) + 7*x(chair,mahachkala) =L= 40 ; (LHS = 0)
+     
+production(tablee)..  2*x(tablee,magnitogorsk) + 3*x(tablee,cheboksari) + x(tablee,mahachkala) =L= 10 ; (LHS = 0)
+     
+
+---- supply  =L=  ограничение на объем закупки сырья у поставщика j
+
+supply(magnitogorsk)..  x(chair,magnitogorsk) + x(tablee,magnitogorsk) =L= 100 ; (LHS = 0)
+     
+supply(cheboksari)..  x(chair,cheboksari) + x(tablee,cheboksari) =L= 70 ; (LHS = 0)
+     
+supply(mahachkala)..  x(chair,mahachkala) + x(tablee,mahachkala) =L= 50 ; (LHS = 0)
+     
+
+---- positiveV  =G=  неотрицательность затрат сырья j на создание продукта i
+
+                NONE
+
+
+---- positiveX  =G=  неотрицательность поставки сырья j для производства продукта i
+
+positiveX(chair,magnitogorsk)..  x(chair,magnitogorsk) =G= 0 ; (LHS = 0)
+     
+positiveX(chair,cheboksari)..  x(chair,cheboksari) =G= 0 ; (LHS = 0)
+     
+positiveX(chair,mahachkala)..  x(chair,mahachkala) =G= 0 ; (LHS = 0)
+     
+REMAINING 3 ENTRIES SKIPPED
+
+
+---- positiveA  =G=  неотрицательность объема продажи продукта i
+
+                NONE
+
+
+---- positiveB  =G=  неотрицательность объема поставки сырья от поставщика j
+
+                NONE
+
+
+---- positiveZ  =G=  неотрицательность целевой функции
+
+positiveZ..  z =G= 0 ; (LHS = 0)
+     
+GAMS 49.2.0  9b2b0844 Mar 5, 2025           DAX-DAC arm 64bit/macOS - 03/18/25 14:06:51 Page 3
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Column Listing      SOLVE lab2 Using MIP From line 52
+
+
+---- z  целевая функция
+
+z
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+        1       profit
+        1       positiveZ
+
+
+---- x  объем поставки сырья от поставщика j использованное для создания продукта i
+
+x(chair,magnitogorsk)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+   -64000       profit
+       14       production(chair)
+        1       supply(magnitogorsk)
+        1       positiveX(chair,magnitogorsk)
+
+x(chair,cheboksari)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+   -66000       profit
+       16       production(chair)
+        1       supply(cheboksari)
+        1       positiveX(chair,cheboksari)
+
+x(chair,mahachkala)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+    -2000       profit
+        7       production(chair)
+        1       supply(mahachkala)
+        1       positiveX(chair,mahachkala)
+
+REMAINING 3 ENTRIES SKIPPED
+GAMS 49.2.0  9b2b0844 Mar 5, 2025           DAX-DAC arm 64bit/macOS - 03/18/25 14:06:51 Page 4
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Range Statistics    SOLVE lab2 Using MIP From line 52
+
+
+RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
+
+RHS       [min, max] : [ 1.000E+01, 1.000E+02] - Zero values observed as well
+Bound     [min, max] : [        NA,        NA] - Zero values observed as well
+Matrix    [min, max] : [ 1.000E+00, 6.600E+04]
+
+GAMS 49.2.0  9b2b0844 Mar 5, 2025           DAX-DAC arm 64bit/macOS - 03/18/25 14:06:51 Page 5
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Model Statistics    SOLVE lab2 Using MIP From line 52
+
+
+MODEL STATISTICS
+
+BLOCKS OF EQUATIONS           8     SINGLE EQUATIONS           13
+BLOCKS OF VARIABLES           2     SINGLE VARIABLES            7
+NON ZERO ELEMENTS            26     DISCRETE VARIABLES          6
+
+
+GENERATION TIME      =        0.003 SECONDS      4 MB  49.2.0 9b2b0844 DAX-DAC
+GAMS 49.2.0  9b2b0844 Mar 5, 2025           DAX-DAC arm 64bit/macOS - 03/18/25 14:06:51 Page 6
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Solution Report     SOLVE lab2 Using MIP From line 52
+
+
+               S O L V E      S U M M A R Y
+
+     MODEL   lab2                OBJECTIVE  z
+     TYPE    MIP                 DIRECTION  MAXIMIZE
+     SOLVER  CPLEX               FROM LINE  52
+
+**** SOLVER STATUS     1 Normal Completion
+**** MODEL STATUS      1 Optimal
+**** OBJECTIVE VALUE           154000.0000
+
+ RESOURCE USAGE, LIMIT          0.016 10000000000.000
+ ITERATION COUNT, LIMIT         4    2147483647
+*** This solver runs with a demo license. No commercial use.
+--- GMO setup time: 0.00s
+--- GMO memory 0.50 Mb (peak 0.50 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.2.0 link memory 0.00 Mb (peak 0.00 Mb)
+--- Starting Cplex
+
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.02sec (det. 0.07 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.00sec (det. 0.01 ticks)
+
+
+Proven optimal solution
+MIP Solution:       154000.000000    (4 iterations, 0 nodes)
+Final Solve:        154000.000000    (0 iterations)
+
+Best possible:      154000.000000
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+
+                           LOWER          LEVEL          UPPER         MARGINAL
+
+---- EQU profit              .              .              .             1.0000      
+
+  profit  устанавливает целевую функцию
+
+---- EQU production  ограничение на выпуск продукта i
+
+              LOWER          LEVEL          UPPER         MARGINAL
+
+chair         -INF           39.0000        40.0000          .          
+tablee        -INF           10.0000        10.0000          .          
+
+---- EQU supply  ограничение на объем закупки сырья у поставщика j
+
+                    LOWER          LEVEL          UPPER         MARGINAL
+
+magnitogorsk        -INF            5.0000       100.0000          .          
+cheboksari          -INF            2.0000        70.0000          .          
+mahachkala          -INF            1.0000        50.0000          .          
+
+---- EQU positiveV  неотрицательность затрат сырья j на создание продукта i
+
+                NONE
+
+
+---- EQU positiveX  неотрицательность поставки сырья j для производства продукта i
+
+                           LOWER          LEVEL          UPPER         MARGINAL
+
+chair .magnitogorsk          .              .            +INF             .          
+chair .cheboksari            .             2.0000        +INF             .          
+chair .mahachkala            .             1.0000        +INF             .          
+tablee.magnitogorsk          .             5.0000        +INF             .          
+tablee.cheboksari            .              .            +INF             .          
+tablee.mahachkala            .              .            +INF             .          
+
+---- EQU positiveA  неотрицательность объема продажи продукта i
+
+                NONE
+
+
+---- EQU positiveB  неотрицательность объема поставки сырья от поставщика j
+
+                NONE
+
+
+                           LOWER          LEVEL          UPPER         MARGINAL
+
+---- EQU positiveZ           .        154000.0000        +INF             .          
+
+  positiveZ  неотрицательность целевой функции
+
+                           LOWER          LEVEL          UPPER         MARGINAL
+
+---- VAR z                 -INF       154000.0000        +INF             .          
+
+  z  целевая функция
+
+---- VAR x  объем поставки сырья от поставщика j использованное для создания продукта i
+
+                           LOWER          LEVEL          UPPER         MARGINAL
+
+chair .magnitogorsk          .              .            +INF        64000.0000      
+chair .cheboksari            .             2.0000        +INF        66000.0000      
+chair .mahachkala            .             1.0000        +INF         2000.0000      
+tablee.magnitogorsk          .             5.0000        +INF         4000.0000      
+tablee.cheboksari            .              .            +INF         6000.0000      
+tablee.mahachkala            .              .            +INF       -28000.0000      
+
+
+**** REPORT SUMMARY :        0     NONOPT
+                             0 INFEASIBLE
+                             0  UNBOUNDED
+GAMS 49.2.0  9b2b0844 Mar 5, 2025           DAX-DAC arm 64bit/macOS - 03/18/25 14:06:51 Page 7
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+E x e c u t i o n
+
+
+----     53 VARIABLE z.L                   =   154000.000  целевая функция
+
+
+EXECUTION TIME       =        0.056 SECONDS      4 MB  49.2.0 9b2b0844 DAX-DAC
+
+
+USER: GAMS Demo, for EULA and demo limitations see   G250131/0001CB-GEN
+      https://www.gams.com/latest/docs/UG%5FLicense.html         DC0000
+
+
+**** FILE SUMMARY
+
+Input      /Users/test/Desktop/University/Labs/SyPPO_2/labs/lab2/lab2.gms
+Output     /Users/test/Desktop/University/Labs/SyPPO_2/labs/lab2/lab2.lst
