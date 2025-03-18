@@ -21,7 +21,23 @@ Parameters
 Table  v(i,j) количество продукта i которое можно получить из единицы веса сырья j
             magnitogorsk  cheboksari  mahachkala
   chair         14           16            7
-  table          2            3            1
+  table          2            3            1    ;
 
 
+Variables
+  z целевая функция
+  x(i, j) объем поставки сырья от поставщика j использованное для создания продукта i;
   
+Equations
+  profit    устанавливает целевую функцию
+  production(i) ограничение на выпуск продукта i
+  supply(j) ограничение на объем закупки сырья у поставщика j;
+  
+cost ..           z =e= sum(i, (sum(j, (v(i, j) * x(i, j))) * p(i))) - sum(j, (sum(i, x(i, j)) * c(j)));
+production(i) ..  sum(j, v(i, j) * x(i, j)) =l= a(i);
+supply(j) ..      sum(i, x(i, j)) =l= b(j);
+
+Model production /all/;
+
+Solve production using LP maximazing z
+display z.l
